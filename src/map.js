@@ -86,7 +86,7 @@ class SimpleMap extends Component {
             });
             let markerInstance = marker;
             marker.addListener("click", function() {
-                SimpleMap.populateInfoWindow(markerInstance, largeInfoWindow, map)
+                populateInfoWindow(markerInstance, largeInfoWindow, map)
             });
             this.props.currentMarkers.push(marker);
         }
@@ -101,7 +101,9 @@ class SimpleMap extends Component {
                 icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             });
             let markerInstance = marker;
-            marker.addListener("click", this.populateInfoWindow(markerInstance, largeInfoWindow, map));
+            marker.addListener("click", function() {
+                populateInfoWindow(markerInstance, largeInfoWindow, map)
+            });
             this.props.currentMarkers.push(marker);
         }
     }
