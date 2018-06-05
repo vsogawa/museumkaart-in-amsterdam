@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+header {
+    font-size: 26px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    letter-spacing: 4px;
+}
+
+#root {
+    height: calc(100vh - 51px);
+}
