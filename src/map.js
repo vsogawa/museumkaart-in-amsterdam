@@ -57,35 +57,37 @@ class SimpleMap extends Component {
     ]
   }
 
-    flickrImages(text) {
+    flickrImages(marker) {
+        let text = marker.title;
         fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0eb33f98a43b11f4a1b4ebea55cb8783&text=${text}&format=json&nojsoncallback=1`, {
             headers: {
                 //"Content-Type": "text/html",
                 //"X-Content-Type-Options": "nosniff",
-                "Access-Control-Allow-Headers": "Access-Control-Allow-Origin",
+                //"Access-Control-Allow-Headers": "Access-Control-Allow-Origin",
                 "Origin": "http://localhost:3000/",
-                "Access-Control-Allow-Origin": "http://localhost:3000/"
+                //"Access-Control-Allow-Origin": "http://localhost:3000/"
             }
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
-            let picLinks = [];
             let photodata = data.photos.photo;
+            let array = [];
             for (let i = 0; i < 5; i++) {
-                picLinks[i] = `https://farm${photodata[i].farm}.staticflickr.com/${photodata[i].server}/${photodata[i].id}_${photodata[i].secret}_q.jpg`;
+                array.push(`https://farm${photodata[i].farm}.staticflickr.com/${photodata[i].server}/${photodata[i].id}_${photodata[i].secret}_q.jpg`);
             }
-            console.log(picLinks);
+            console.log(array);
+            return array;
         })
     }
 
     populateInfoWindow(marker, price, infowindow, map) {
-        let picLinkArray = this.flickrImages(marker.title);
+        let picLinkArray = this.flickrImages(marker);
         if (infowindow.marker != marker) {
             infowindow.marker = marker;
             infowindow.setContent(`
                 <div class="title"><a target="_blank" href=${marker.link}>${marker.title}</a></div>
                 <div class="price">${price}</div>
-                
+                <img src=${picLinkArray[0]}>
             `);
             infowindow.open(map, marker);
             infowindow.addListener("closeclick", function() {
