@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import SimpleMap from './map.js';
-import Search from './search.js';
+
 
 
 class App extends Component {
@@ -12,7 +12,6 @@ class App extends Component {
 
   render() {
     return (
-      <Search/>,
       <SimpleMap/>
     );
   }

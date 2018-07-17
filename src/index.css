@@ -63,6 +63,8 @@ a {
     right: 0;
     background-color: bisque;
     opacity: 0.8;
+    z-index: 2;
+    margin: 0;
 }
 
 .active {

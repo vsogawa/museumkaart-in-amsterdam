@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
-
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+import Search from './search.js';
 
 class SimpleMap extends Component {
     state = {
+        mapOpen: true,
         currentMarkers: [],
         markers: [
             {title: "Rijksmuseum", link: "https://www.rijksmuseum.nl/en", free: true, location: {lat: 52.3600, lng: 4.8852}},
@@ -151,6 +151,7 @@ class SimpleMap extends Component {
   render() {
     return (
       <div style={{ height: '100%', width: '100%' }}>
+        {this.state.mapOpen ? <Search/> : null}
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.props.center}
@@ -158,11 +159,6 @@ class SimpleMap extends Component {
           onGoogleApiLoaded={({map, maps}) => this.renderMarkers(map, maps)}
             yesIWantToUseGoogleMapApiInternals={true}
         >
-          <AnyReactComponent
-            lat={59.955413}
-            lng={30.337844}
-            text={'Kreyser Avrora'}
-          />
         </GoogleMapReact>
       </div>
     );
