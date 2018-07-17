@@ -5,20 +5,12 @@ body {
 }
 
 header {
-    height: 40px;
+    height: 30px;
     background-color: darkorange;
     color: white;
     text-align: center;
     padding: 10px;
     
-}
-
-#card {
-    float: right;
-    font-style: italic;
-    color: white;
-    padding-right: 20px;
-    padding-top: 10px;
 }
 
 #museumkaart {
@@ -31,7 +23,7 @@ header {
 }
 
 #root {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 50px);
 }
 
 .title {
@@ -57,4 +49,51 @@ a {
 .gallery {
     margin: 5px;
     
+}
+
+.fa-bars {
+    display: none;
+}
+
+#menu {
+    height: calc(100vh - 50px);
+    width: 300px;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: bisque;
+    opacity: 0.8;
+}
+
+.active {
+    transition: 0.3s;
+    right: -300px;
+}
+
+@media screen and (max-width: 560px) {
+    img {
+        height: 100px;
+        width: 100px;
+    }
+    
+    #museumkaart {
+        font-size: 16px;
+        line-height: 16px;
+        padding: 0 50px 0 20px;
+    }
+    
+    
+    .fa-bars {
+        display: block;
+        position: absolute;
+        right: 30px;
+        top: 13px;
+        font-size: 26px;
+        color: white;
+    }
+    
+    .fa-bars:hover {
+        color: saddlebrown;
+        cursor: pointer;
+    }
 }

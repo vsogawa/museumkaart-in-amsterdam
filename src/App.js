@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import SimpleMap from './map.js';
+import Search from './map.js';
+
 
 class App extends Component {
     state = {
@@ -10,6 +12,7 @@ class App extends Component {
 
   render() {
     return (
+      <Search/>,
       <SimpleMap/>
     );
   }
