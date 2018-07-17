@@ -9,7 +9,7 @@ class Search extends Component {
 
   render() {
     return (
-      <h1 style={{ height: '100%', width: '100%', z-index: 3, background-color: "blue" }}>TEST SEARCH BAR</h1>
+      `<h1 style={{ height: '400px', width: '400px', background-color: "blue" }}>TEST SEARCH BAR</h1>`
     );
   }
 }
