@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Search from './search.js';
 
+
 class SimpleMap extends Component {
     state = {
         mapOpen: true,
@@ -151,7 +152,7 @@ class SimpleMap extends Component {
   render() {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        {this.state.mapOpen ? <Search/> : null}
+        {this.state.mapOpen ? <Search museumList={this.state.markers}/> : null}
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.props.center}

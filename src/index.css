@@ -67,6 +67,13 @@ a {
     margin: 0;
 }
 
+#results {
+    height: 90%;
+    width: 90%;
+    background-color: white;
+    margin: auto;
+}
+
 .active {
     transition: 0.3s;
     right: -300px;
