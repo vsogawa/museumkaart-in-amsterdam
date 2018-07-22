@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Search from './search.js';
+import ReactDOM from 'react-dom';
+import escapeRegExp from 'escape-string-regexp';
+import sortBy from 'sort-by';
 
 
 class SimpleMap extends Component {
@@ -59,6 +62,13 @@ class SimpleMap extends Component {
     zoom: 13,
     
   }
+    
+    toggleSearch = () => {
+        if (this.state.mapOpen === true) {
+            this.setState({ mapOpen: false })
+        } else (this.setState({mapOpen: true}))
+        
+    }
 
     renderMarkers(map, maps) {
         let self = this;
@@ -152,6 +162,7 @@ class SimpleMap extends Component {
   render() {
     return (
       <div style={{ height: '100%', width: '100%' }}>
+        <i class="fa fa-bars" onClick={this.toggleSearch}></i>
         {this.state.mapOpen ? <Search museumList={this.state.markers}/> : null}
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}

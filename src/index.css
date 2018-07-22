@@ -55,6 +55,12 @@ a {
     display: none;
 }
 
+#searchtext {
+    margin: 20px;
+    width: 80%;
+    padding: 6px;
+}
+
 #menu {
     height: calc(100vh - 50px);
     width: 300px;
@@ -62,7 +68,7 @@ a {
     top: 50px;
     right: 0;
     background-color: bisque;
-    opacity: 0.8;
+    opacity: 0.9;
     z-index: 2;
     margin: 0;
 }
@@ -72,11 +78,46 @@ a {
     width: 90%;
     background-color: white;
     margin: auto;
+    overflow-y: scroll;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 30px 20px;
+}
+
+li {
+    height: 50px;
+}
+
+li a {
+    color: black;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+li a:hover {
+    color: darkorange;
 }
 
 .active {
     transition: 0.3s;
     right: -300px;
+}
+
+.fa-bars {
+    display: block;
+    position: absolute;
+    right: 30px;
+    top: 13px;
+    font-size: 26px;
+    color: white;
+}
+
+.fa-bars:hover {
+    color: saddlebrown;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 560px) {
@@ -92,17 +133,5 @@ a {
     }
     
     
-    .fa-bars {
-        display: block;
-        position: absolute;
-        right: 30px;
-        top: 13px;
-        font-size: 26px;
-        color: white;
-    }
     
-    .fa-bars:hover {
-        color: saddlebrown;
-        cursor: pointer;
-    }
 }
