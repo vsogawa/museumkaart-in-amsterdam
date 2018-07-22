@@ -69,6 +69,17 @@ class SimpleMap extends Component {
         } else (this.setState({mapOpen: true}))
         
     }
+    
+    highlightMuseum(name) {
+        let markerName;
+        let searchMuseumArray = this.state.markers;
+        searchMuseumArray.forEach(function(museum, index) {
+            if (museum.title === name) {
+                markerName = museum;
+            }
+        })
+        return markerName;
+    }
 
     renderMarkers(map, maps) {
         let self = this;
@@ -163,7 +174,10 @@ class SimpleMap extends Component {
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <i class="fa fa-bars" onClick={this.toggleSearch}></i>
-        {this.state.mapOpen ? <Search museumList={this.state.markers}/> : null}
+        {this.state.mapOpen ? <Search museumList={this.state.markers} 
+        query={this.props.query} 
+        updateQuery={this.props.updateQuery}
+        highlightMuseum={this.highlightMuseum}/> : null }
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.props.center}

@@ -5,21 +5,14 @@ import sortBy from 'sort-by';
 
 
 class Search extends Component {    
-    state = {
-        query: ''
-    }
-    
-updateQuery = (query) => {
-        this.setState({ query: query.trim() })
-    }
 
   render () {
 
       const museums = this.props.museumList
       
       let showingMuseums
-        if (this.state.query) {
-            const match = new RegExp(escapeRegExp(this.state.query), 'i')
+        if (this.props.query) {
+            const match = new RegExp(escapeRegExp(this.props.query), 'i')
             showingMuseums = museums.filter(museum=>match.test(museum.title))
         }
         else {
@@ -33,13 +26,13 @@ updateQuery = (query) => {
           <input id = "searchtext" 
           type="text" 
           placeholder="Search for a museum!" 
-          value={this.state.query} 
-          onChange={(event) => this.updateQuery(event.target.value)}/>
+          value={this.props.query} 
+          onChange={(event) => this.props.updateQuery(event.target.value)}/>
 
           <div id="results">
             <ul id = "ulList">
               {showingMuseums.map((museum) => (
-                <li key={museum.name}><a target="_blank" href={museum.link}>{museum.title}</a></li>
+                <li key={museum.name}><a onClick={(event) => this.props.highlightMuseum(event.target.innerHTML)}>{museum.title}</a></li>
               ))}
             </ul>
           </div>

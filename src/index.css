@@ -99,6 +99,7 @@ li a {
 
 li a:hover {
     color: darkorange;
+    cursor: pointer;
 }
 
 .active {

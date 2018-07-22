@@ -8,13 +8,17 @@ import sortBy from 'sort-by';
 
 class App extends Component {
     state = {
-        markers: []
+        markers: [],
+        query: ''
     }
 
+    updateQuery = (query) => {
+            this.setState({ query: query.trim() })
+    }
 
   render() {
     return (
-      <SimpleMap/>
+      <SimpleMap query={this.state.query} updateQuery={this.updateQuery}/>
     );
   }
 }
