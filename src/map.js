@@ -99,9 +99,9 @@ class SimpleMap extends Component {
                 for (let j = 0; j < 6; j++) {
                     array.push(`https://farm${photodata[j].farm}.staticflickr.com/${photodata[j].server}/${photodata[j].id}_${photodata[j].secret}_q.jpg`);
                 }
+                //updating markers wtih flickr data
                 let updateMarkers = self.state.markers;
                 updateMarkers[i].galleryIcons = array;
-                //console.log(updateMarkers);
                 self.setState({markers: updateMarkers});
             }).then(function(data){
                 let position = self.state.markers[i].location;
@@ -137,7 +137,7 @@ class SimpleMap extends Component {
                 }
 
                 marker.addListener("click", function() {
-                    
+                    //console.log("click registered");
                     self.populateInfoWindow(markerInstance, price, largeInfoWindow, map)
                 });
                 //let current = self.state.currentMarkers;
@@ -182,7 +182,7 @@ class SimpleMap extends Component {
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
-          onGoogleApiLoaded={({map, maps}) => this.renderMarkers(map, maps)}
+          onGoogleApiLoaded={({map, maps}) =>this.renderMarkers(map, maps)}
             yesIWantToUseGoogleMapApiInternals={true}
         >
         </GoogleMapReact>
