@@ -220,7 +220,7 @@ class SimpleMap extends Component {
   render() {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        <i class="fa fa-bars" onClick={this.toggleSearch}></i>
+        <i className="fa fa-bars" onClick={this.toggleSearch}></i>
         {this.state.mapOpen ? <Search museumList={this.state.markers} 
         query={this.props.query} 
         updateQuery={this.props.updateQuery}

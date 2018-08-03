@@ -32,7 +32,7 @@ class Search extends Component {
           <div id="results">
             <ul id = "ulList">
               {showingMuseums.map((museum) => (
-                <li key={museum.name}><a onClick={(event) => this.props.highlightMuseum(event.target.innerHTML)}>{museum.title}</a></li>
+                <li key={museum.title}><a key={museum.link} onClick={(event) => this.props.highlightMuseum(event.target.innerHTML)}>{museum.title}</a></li>
               ))}
             </ul>
           </div>
