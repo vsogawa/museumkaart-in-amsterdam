@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 import escapeRegExp from 'escape-string-regexp';
 import sortBy from 'sort-by';
 
+var myMap;
+var myMaps;
 
 class SimpleMap extends Component {
     state = {
@@ -112,6 +114,8 @@ class SimpleMap extends Component {
     }
     
     highlightMuseum(name) {
+        console.log("entered highlight Musem");
+        console.log(myMap);
         let markerName;
         let searchMuseumArray = this.state.markers;
         searchMuseumArray.forEach(function(museum, index) {
@@ -120,13 +124,17 @@ class SimpleMap extends Component {
             }
         })
         this.setState({currentMarkers: [markerName]});
-        this.renderMarkers(map, maps, this.state.currentMarkers);
+        this.renderMarkers(myMap, myMaps, this.state.currentMarkers);
     }
 
     
 
     renderMarkers(map, maps, arrayToRender) {
         let self = this;
+        
+        //myMap = map;
+        //myMaps = maps;
+        
         let largeInfoWindow = new maps.InfoWindow();
         for (let i = 0; i < arrayToRender.length; i++) {
             let marker = arrayToRender[i];
@@ -223,7 +231,7 @@ class SimpleMap extends Component {
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
-          onGoogleApiLoaded={({map, maps}) =>this.renderMarkers(map, maps, this.state.currentMarkers)}
+          onGoogleApiLoaded={({map, maps}) => this.renderMarkers(map, maps, this.state.currentMarkers)}
             yesIWantToUseGoogleMapApiInternals={true}
         >
         </GoogleMapReact>
