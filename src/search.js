@@ -5,6 +5,7 @@ import sortBy from 'sort-by';
 
 
 class Search extends Component {    
+    
 
   render () {
 
@@ -18,9 +19,13 @@ class Search extends Component {
         else {
             showingMuseums = this.props.museumList    
         }
-        
-        showingMuseums.sort(sortBy('title'))
+        showingMuseums.sort(sortBy('title'));
+      console.log(this.props.simpleMapDidMount);
+        if (this.props.simpleMapDidMount) {
+            this.props.renderSpecificMarkers(window.myMap, window.myMaps, showingMuseums);
+        }
 
+    
       return (
         <div id="menu">
           <input id = "searchtext" 

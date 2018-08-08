@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Search from './search.js';
+import PhotoHandler from './photo-handler.js';
 import ReactDOM from 'react-dom';
 import escapeRegExp from 'escape-string-regexp';
 import sortBy from 'sort-by';
 
 class SimpleMap extends Component {
     state = {
+        center: {
+          lat: 52.3600,
+          lng: 4.8852
+        },
+        zoom: 13,
         mapOpen: true,
         currentMarkers: [],
         markers: [
@@ -50,17 +56,9 @@ class SimpleMap extends Component {
             {title: "Houseboat Museum", link: "https://www.houseboatmuseum.nl/", free: false, location: {lat: 52.370139, lng: 4.882600}},
             {title: "Molen van Sloten - Kuiperijmuseum", link: "https://molenvansloten.nl/index.php/sample-page/english/", free: false, location: {lat: 52.341582, lng: 4.792314}},
             {title: "Dutch Costume Museum", link: "hetklederdrachtmuseum.nl/en/", free: false, location: {lat: 52.367374, lng: 4.887814}}
-        ]
+        ],
+        SimpleMapDidMount: false
     }
-
-  static defaultProps = {
-    center: {
-      lat: 52.3600,
-      lng: 4.8852
-    },
-    zoom: 13,
-    
-  }
     
     toggleSearch = () => {
         if (this.state.mapOpen === true) {
@@ -69,57 +67,37 @@ class SimpleMap extends Component {
         
     }
     
-    highlightMuseum(name) {
-        let markerName;
-        let searchMuseumArray = this.state.markers;
-        searchMuseumArray.forEach(function(museum, index) {
+    recenterMap(newCenter) {
+        this.setState({center: newCenter});
+    }
+    
+    async highlightMuseum(name) {
+        let self = this;
+        let selectedMarker;
+        let museumArray = this.state.markers;
+        museumArray.forEach(function(museum, index) {
             if (museum.title === name) {
-                markerName = museum;
+                selectedMarker = museum;
+                window.myMap.setCenter(museum.location);
             }
         })
-        this.setState({currentMarkers: [markerName]});
-        console.log(this.state.currentMarkers);
+        await this.setState({currentMarkers: [selectedMarker]});
         this.renderMarkers(window.myMap, window.myMaps, this.state.currentMarkers);
     }
-
-
-    componentDidMount() {
-        this.populatePhotos();
-    }
-
-    populatePhotos() {
+ 
+    initializeData(map, maps) {
+        window.myMap = map;
+        window.myMaps = maps;
+        
         //deep copy of this.state.markers
-        let copyOfMarkers = JSON.parse(JSON.stringify(this.state.markers));
-
-        for (let i = 0; i < this.state.markers.length; i++) {
-            let currentMuseum = this.state.markers[i];
-            let searchPhrase = currentMuseum.title;
-
-            fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0eb33f98a43b11f4a1b4ebea55cb8783&text=${searchPhrase}&format=json&nojsoncallback=1`,
-                {
-                    headers: {"Origin": "http://localhost:3000/"}
-                }
-            ).then(function(response) {
-                return response.json();
-            }).then(function(data) {
-                let photodata = data.photos.photo;
-                let arrayOfPhotoLinks = [];
-                for (let j = 0; j < 6; j++) {
-                    arrayOfPhotoLinks.push(`https://farm${photodata[j].farm}.staticflickr.com/${photodata[j].server}/${photodata[j].id}_${photodata[j].secret}_q.jpg`);
-                }
-                copyOfMarkers[i].galleryIcons = arrayOfPhotoLinks;
-            })
-        }
-        this.setState({markers: copyOfMarkers});
+        let copyOfMarkers = JSON.parse(JSON.stringify(this.state.markers));    
+        this.setState({currentMarkers: copyOfMarkers});
+        this.renderMarkers(map, maps, this.state.currentMarkers);
+        this.setState({SimpleMapDidMount: true});
     }
-
-    
 
     renderMarkers(map, maps, arrayToRender) {
         let self = this;
-
-        window.myMap = map;
-        window.myMaps = maps;
 
         if(window.markersArray === undefined){
             window.markersArray = [];
@@ -137,8 +115,6 @@ class SimpleMap extends Component {
             let position = arrayToRender[i].location;
             let title = arrayToRender[i].title;
             let link = arrayToRender[i].link;
-            let galleryIcons = arrayToRender[i].galleryIcons;
-
             let marker, price;
             if (arrayToRender[i].free === true) {
                 price = "Free admission with Museumkaart";
@@ -147,7 +123,6 @@ class SimpleMap extends Component {
                     position: position,
                     title: title,
                     link: link,
-                    galleryIcons: galleryIcons,
                     id: i,
                     icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
                 });
@@ -158,7 +133,6 @@ class SimpleMap extends Component {
                     position: position,
                     title: title,
                     link: link,
-                    galleryIcons: galleryIcons,
                     id: i + "paid",
                     icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
                 });
@@ -170,18 +144,20 @@ class SimpleMap extends Component {
         }
     }
 
-    populateInfoWindow(marker, price, infowindow, map) {
+    async populateInfoWindow(marker, price, infowindow, map) {
         if (infowindow.marker != marker) {
             infowindow.marker = marker;
+            let photoHandler = new PhotoHandler();
+            let galleryIcons = await photoHandler.getGalleryIcons(marker.title);
             infowindow.setContent(`
                 <div class="title"><a target="_blank" href=${marker.link}>${marker.title}</a></div>
                 <div class="price">${price}</div>
-                <img class="gallery" src=${marker.galleryIcons[0]}>
-                <img class="gallery" src=${marker.galleryIcons[1]}>
-                <img class="gallery" src=${marker.galleryIcons[2]}><br>
-                <img class="gallery" src=${marker.galleryIcons[3]}>
-                <img class="gallery" src=${marker.galleryIcons[4]}>
-                <img class="gallery" src=${marker.galleryIcons[5]}>
+                <img class="gallery" src=${galleryIcons[0]}>
+                <img class="gallery" src=${galleryIcons[1]}>
+                <img class="gallery" src=${galleryIcons[2]}><br>
+                <img class="gallery" src=${galleryIcons[3]}>
+                <img class="gallery" src=${galleryIcons[4]}>
+                <img class="gallery" src=${galleryIcons[5]}>
             `);
             infowindow.open(map, marker);
             infowindow.addListener("closeclick", function() {
@@ -197,14 +173,15 @@ class SimpleMap extends Component {
         {this.state.mapOpen ? <Search museumList={this.state.markers} 
         query={this.props.query} 
         updateQuery={this.props.updateQuery}
+        simpleMapDidMount={this.state.SimpleMapDidMount} 
         highlightMuseum={this.highlightMuseum.bind(this)}
         renderSpecificMarkers={this.renderMarkers.bind(this)}
         currentMarkers = {this.state.currentMarkers}/> : null }
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
-          defaultCenter={this.props.center}
-          defaultZoom={this.props.zoom}
-          onGoogleApiLoaded={({map, maps}) => this.renderMarkers(map, maps, this.state.currentMarkers)}
+          defaultCenter={this.state.center}
+          defaultZoom={this.state.zoom}
+          onGoogleApiLoaded={({map, maps}) => this.initializeData(map, maps)}
             yesIWantToUseGoogleMapApiInternals={true}
         >
         </GoogleMapReact>
