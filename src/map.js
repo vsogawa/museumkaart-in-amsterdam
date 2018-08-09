@@ -57,7 +57,7 @@ class SimpleMap extends Component {
             {title: "Molen van Sloten - Kuiperijmuseum", link: "https://molenvansloten.nl/index.php/sample-page/english/", free: false, location: {lat: 52.341582, lng: 4.792314}},
             {title: "Dutch Costume Museum", link: "hetklederdrachtmuseum.nl/en/", free: false, location: {lat: 52.367374, lng: 4.887814}}
         ],
-        SimpleMapDidMount: false
+        SimpleMapDidMount: false,
     }
     
     toggleSearch = () => {
@@ -66,23 +66,20 @@ class SimpleMap extends Component {
         } else (this.setState({mapOpen: true}))
         
     }
-    
-    recenterMap(newCenter) {
-        this.setState({center: newCenter});
-    }
+
     
     async highlightMuseum(name) {
         let self = this;
         let selectedMarker;
-        let museumArray = this.state.markers;
+        let museumArray = window.markersArray;
         museumArray.forEach(function(museum, index) {
             if (museum.title === name) {
+                console.log(museum);
                 selectedMarker = museum;
-                window.myMap.setCenter(museum.location);
+                window.myMap.panTo(museum.position);
+                self.populateInfoWindow(selectedMarker, window.infoWindow, window.myMap);
             }
         })
-        await this.setState({currentMarkers: [selectedMarker]});
-        this.renderMarkers(window.myMap, window.myMaps, this.state.currentMarkers);
     }
  
     initializeData(map, maps) {
@@ -96,7 +93,7 @@ class SimpleMap extends Component {
         this.setState({SimpleMapDidMount: true});
     }
 
-    renderMarkers(map, maps, arrayToRender) {
+    renderMarkers(map, maps, arrayToRender, name=null) {
         let self = this;
 
         if(window.markersArray === undefined){
@@ -110,54 +107,103 @@ class SimpleMap extends Component {
             window.markersArray = [];
         }
        
-        let largeInfoWindow = new maps.InfoWindow();
+        if(window.infoWindow === undefined){
+            window.infoWindow = new maps.InfoWindow();
+        }
+        let largeInfoWindow = window.infoWindow;
         for (let i = 0; i < arrayToRender.length; i++) {
             let position = arrayToRender[i].location;
             let title = arrayToRender[i].title;
             let link = arrayToRender[i].link;
-            let marker, price;
-            if (arrayToRender[i].free === true) {
-                price = "Free admission with Museumkaart";
+            let marker;
+            if (arrayToRender[i].free === true && name===title) {
                 marker = new maps.Marker({
                     map: map,
                     position: position,
                     title: title,
+                    price: "Free admission with Museumkaart",
+                    animation: maps.Animation.DROP,
                     link: link,
                     id: i,
                     icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
                 });
-            } else {
-                price = "Discounted admission with Museumkaart";
+            } else if (arrayToRender[i].free === true && !name) {
                 marker = new maps.Marker({
                     map: map,
                     position: position,
                     title: title,
+                    animation: maps.Animation.DROP,
+                    price: "Free admission with Museumkaart",
+                    link: link,
+                    id: i,
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                });
+            } else if (arrayToRender[i].free === false && name===title) {
+                marker = new maps.Marker({
+                    map: map,
+                    position: position,
+                    title: title,
+                    price: "Discounted admission with Museumkaart",
+                    animation: maps.Animation.DROP,
                     link: link,
                     id: i + "paid",
                     icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
                 });
+            } else if (arrayToRender[i].free === false && !name) {
+                marker = new maps.Marker({
+                    map: map,
+                    position: position,
+                    title: title,
+                    animation: maps.Animation.DROP,
+                    price: "Discounted admission with Museumkaart",
+                    link: link,
+                    id: i + "paid",
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                });
+            } else if (arrayToRender[i].free === false && name) {
+                marker = new maps.Marker({
+                    map: map,
+                    position: position,
+                    title: title,
+                    price: "Discounted admission with Museumkaart",
+                    link: link,
+                    id: i + "paid",
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                });
+            } else if (arrayToRender[i].free === true && name) {
+                marker = new maps.Marker({
+                    map: map,
+                    position: position,
+                    title: title,
+                    price: "Free admission with Museumkaart",
+                    link: link,
+                    id: i,
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                });
             }
+            
             window.markersArray.push(marker);
             marker.addListener("click", function() {
-                self.populateInfoWindow(marker, price, largeInfoWindow, map);
+                self.populateInfoWindow(marker, largeInfoWindow, map);
             });
         }
     }
 
-    async populateInfoWindow(marker, price, infowindow, map) {
+    async populateInfoWindow(marker, infowindow, map) {
         if (infowindow.marker != marker) {
             infowindow.marker = marker;
             let photoHandler = new PhotoHandler();
             let galleryIcons = await photoHandler.getGalleryIcons(marker.title);
             infowindow.setContent(`
                 <div class="title"><a target="_blank" href=${marker.link}>${marker.title}</a></div>
-                <div class="price">${price}</div>
+                <div class="price">${marker.price}</div>
                 <img class="gallery" src=${galleryIcons[0]}>
                 <img class="gallery" src=${galleryIcons[1]}>
                 <img class="gallery" src=${galleryIcons[2]}><br>
                 <img class="gallery" src=${galleryIcons[3]}>
                 <img class="gallery" src=${galleryIcons[4]}>
-                <img class="gallery" src=${galleryIcons[5]}>
+                <img class="gallery" src=${galleryIcons[5]}><br>
+                Images from flickr.com
             `);
             infowindow.open(map, marker);
             infowindow.addListener("closeclick", function() {
@@ -174,9 +220,8 @@ class SimpleMap extends Component {
         query={this.props.query} 
         updateQuery={this.props.updateQuery}
         simpleMapDidMount={this.state.SimpleMapDidMount} 
-        highlightMuseum={this.highlightMuseum.bind(this)}
-        renderSpecificMarkers={this.renderMarkers.bind(this)}
-        currentMarkers = {this.state.currentMarkers}/> : null }
+        highlightMuseum={this.highlightMuseum.bind(this)} 
+        renderSpecificMarkers={this.renderMarkers.bind(this)} /> : null }
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyAI_0G1rHFr1Y586E2PXU_H6d7RqbIxlLM" }}
           defaultCenter={this.state.center}

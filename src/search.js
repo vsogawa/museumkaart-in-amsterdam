@@ -9,18 +9,17 @@ class Search extends Component {
 
   render () {
 
-      const museums = this.props.museumList
+      const museums = this.props.museumList;
       
-      let showingMuseums
+      let showingMuseums;
         if (this.props.query) {
             const match = new RegExp(escapeRegExp(this.props.query), 'i')
-            showingMuseums = museums.filter(museum=>match.test(museum.title))
+            showingMuseums = museums.filter(museum=>match.test(museum.title));
         }
         else {
             showingMuseums = this.props.museumList    
         }
         showingMuseums.sort(sortBy('title'));
-      console.log(this.props.simpleMapDidMount);
         if (this.props.simpleMapDidMount) {
             this.props.renderSpecificMarkers(window.myMap, window.myMaps, showingMuseums);
         }

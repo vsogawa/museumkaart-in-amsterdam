@@ -8,7 +8,6 @@ import sortBy from 'sort-by';
 
 class App extends Component {
     state = {
-        markers: [],
         query: ''
     }
 

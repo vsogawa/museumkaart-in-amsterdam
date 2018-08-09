@@ -22,6 +22,11 @@ header {
     font-weight: 700;
 }
 
+img {
+    height: 100px;
+    width: 100px;
+}
+
 #root {
     height: calc(100vh - 50px);
 }
@@ -122,10 +127,7 @@ li a:hover {
 }
 
 @media screen and (max-width: 560px) {
-    img {
-        height: 100px;
-        width: 100px;
-    }
+    
     
     #museumkaart {
         font-size: 16px;
