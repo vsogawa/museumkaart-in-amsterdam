@@ -17,12 +17,11 @@ class PhotoHandler extends Component {
             return response.json();
         }).then(function(data) {
             let photodata = data.photos.photo;
-            
+            console.log(photodata);
             for (let j = 0; j < 6; j++) {
                 arrayOfPhotoLinks.push(`https://farm${photodata[j].farm}.staticflickr.com/${photodata[j].server}/${photodata[j].id}_${photodata[j].secret}_q.jpg`);
             }            
         });
-        
         return arrayOfPhotoLinks;
     }
     
