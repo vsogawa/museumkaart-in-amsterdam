@@ -9,7 +9,6 @@
     "react-dom": "^16.4.0",
     "react-scripts": "1.1.4",
     "sort-by": "^1.2.0",
-      "serve": "^1.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
