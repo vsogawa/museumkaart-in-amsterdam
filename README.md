@@ -3,7 +3,7 @@ This is the final project for the Udacity front end web development nanodegree. 
 In the project directory, run:
 ### `npm install`
 and then 
-### `npm start`
+### `npm run build`
 
 ## Sites/Tools Used
 
