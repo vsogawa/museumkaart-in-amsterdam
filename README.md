@@ -5,7 +5,7 @@ In the project directory, run:
 and then 
 ### `npm run build`
 
-Find the project at http://localhost:5000/
+Find the project at http://localhost:3000/
 
 ## Sites/Tools Used
 
