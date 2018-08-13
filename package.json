@@ -2,7 +2,7 @@
   "name": "schedule",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://localhost:5000/",
+  "homepage" : "http://localhost:3000/",
   "dependencies": {
     "escape-string-regexp": "^1.0.5",
     "google-map-react": "^1.0.3",
