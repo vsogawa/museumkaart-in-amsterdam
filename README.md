@@ -2,8 +2,9 @@ This is the final project for the Udacity front end web development nanodegree. 
 
 In the project directory, run:
 ### `npm install`
-and then 
 ### `npm run build`
+and then 
+### `serve -s build`
 
 Find the project at http://localhost:3000/
 
