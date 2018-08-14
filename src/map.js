@@ -72,18 +72,25 @@ class SimpleMap extends Component {
         let self = this;
         let selectedMarker;
         let museumArray = window.markersArray;
-        museumArray.forEach(function(museum, index) {
+         museumArray.forEach(async function(museum, index) {
             if (museum.title === name) {
                 selectedMarker = museum;
                 window.myMap.panTo(museum.position);
-                self.populateInfoWindow(selectedMarker, window.infoWindow, window.myMap);
-                let museumid = selectedMarker.id;
-                console.log(museumid)
-                setTimeout(function(){
-                    document.getElementById(museumid).focus();
-                }, 800);
+                selectedMarker.setAnimation(window.myMaps.Animation.BOUNCE);
+                await self.populateInfoWindow(selectedMarker, window.infoWindow, window.myMap);
+                let museumId = selectedMarker.id;
+
+                setTimeout(function() {
+                    if(document.getElementById(museumId) != null){
+                        document.getElementById(museumId).focus();
+                    }
+                },300);
+                
+                setTimeout(function() {
+                    selectedMarker.setAnimation(null);
+                }, 1400);
             }
-        })
+        }) 
     }
  
     initializeData(map, maps) {
@@ -92,7 +99,7 @@ class SimpleMap extends Component {
         
         //deep copy of this.state.markers
         let copyOfMarkers = JSON.parse(JSON.stringify(this.state.markers));    
-        this.setState({currentMarkers: copyOfMarkers});
+        this.setState({currentMarkers: copyOfMarkers}, );
         this.renderMarkers(map, maps, this.state.currentMarkers);
         this.setState({SimpleMapDidMount: true});
     }
@@ -129,7 +136,8 @@ class SimpleMap extends Component {
                     animation: maps.Animation.DROP,
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             } else if (arrayToRender[i].free === true && !name) {
                 marker = new maps.Marker({
@@ -140,7 +148,8 @@ class SimpleMap extends Component {
                     price: "Free admission with Museumkaart",
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             } else if (arrayToRender[i].free === false && name===title) {
                 marker = new maps.Marker({
@@ -151,7 +160,8 @@ class SimpleMap extends Component {
                     animation: maps.Animation.DROP,
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             } else if (arrayToRender[i].free === false && !name) {
                 marker = new maps.Marker({
@@ -162,7 +172,8 @@ class SimpleMap extends Component {
                     price: "Discounted admission with Museumkaart",
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             } else if (arrayToRender[i].free === false && name) {
                 marker = new maps.Marker({
@@ -172,7 +183,8 @@ class SimpleMap extends Component {
                     price: "Discounted admission with Museumkaart",
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             } else if (arrayToRender[i].free === true && name) {
                 marker = new maps.Marker({
@@ -182,7 +194,8 @@ class SimpleMap extends Component {
                     price: "Free admission with Museumkaart",
                     link: link,
                     id: arrayToRender[i].mid,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                    icon: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                    zIndex: (1000 - position.lat) * 1000000
                 });
             }
             
@@ -194,32 +207,31 @@ class SimpleMap extends Component {
     }
 
     async populateInfoWindow(marker, infowindow, map) {
-        if (infowindow.marker != marker) {
-            infowindow.marker = marker;
-            let photoHandler = new PhotoHandler();
-            let galleryIcons = await photoHandler.getGalleryIcons(marker.title);
-            infowindow.setContent(`
-                <div class="title"><a id=${marker.id} tabIndex="-1" target="_blank" href=${marker.link}>${marker.title}</a></div>
-                <div class="price">${marker.price}</div>
-                <img class="gallery" alt="${marker.title} picture 1" src=${galleryIcons[0]}>
-                <img class="gallery" alt="${marker.title} picture 2" src=${galleryIcons[1]}>
-                <img class="gallery" alt="${marker.title} picture 3" src=${galleryIcons[2]}><br>
-                <img class="gallery" alt="${marker.title} picture 4" src=${galleryIcons[3]}>
-                <img class="gallery" alt="${marker.title} picture 5" src=${galleryIcons[4]}>
-                <img class="gallery" alt="${marker.title} picture 6" src=${galleryIcons[5]}><br>
-                Images from flickr.com
-            `);
-            infowindow.open(map, marker);
-            infowindow.addListener("closeclick", function() {
-            infowindow.close();
-            });
-        }
+        infowindow.marker = marker;
+        let photoHandler = new PhotoHandler();
+        let galleryIcons = await photoHandler.getGalleryIcons(marker.title);
+        await infowindow.setContent(`
+            <div class="title"><a id=${marker.id} tabIndex="-1" target="_blank" href=${marker.link}>${marker.title}</a></div>
+            <div class="price">${marker.price}</div>
+            <img class="gallery" alt="${marker.title} picture 1" src=${galleryIcons[0]}>
+            <img class="gallery" alt="${marker.title} picture 2" src=${galleryIcons[1]}>
+            <img class="gallery" alt="${marker.title} picture 3" src=${galleryIcons[2]}><br>
+            <img class="gallery" alt="${marker.title} picture 4" src=${galleryIcons[3]}>
+            <img class="gallery" alt="${marker.title} picture 5" src=${galleryIcons[4]}>
+            <img class="gallery" alt="${marker.title} picture 6" src=${galleryIcons[5]}><br>
+            Images from flickr.com
+        `);
+        infowindow.open(map, marker);
+        infowindow.addListener("closeclick", function() {
+        infowindow.close();
+        });
     }
+
 
   render() {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        <i className="fa fa-bars" onClick={this.toggleSearch}></i>
+        <i role="switch" className="fa fa-bars" onClick={this.toggleSearch}></i>
         {this.state.mapOpen ? <Search museumList={this.state.markers} 
         query={this.props.query} 
         updateQuery={this.props.updateQuery}
@@ -231,7 +243,7 @@ class SimpleMap extends Component {
           defaultCenter={this.state.center}
           defaultZoom={this.state.zoom}
           onGoogleApiLoaded={({map, maps}) => this.initializeData(map, maps)}
-            yesIWantToUseGoogleMapApiInternals={true}
+            yesIWantToUseGoogleMapApiInternals={true} 
         >
         </GoogleMapReact>
       </div>

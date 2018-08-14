@@ -13,15 +13,27 @@ class PhotoHandler extends Component {
             {
                 headers: {"Origin": "http://localhost:3000/"}
             }
-        ).catch(function() {
+        ).then(function(response) {
+            let jsonResponse = response.json();
+            if(jsonResponse.stat === "fail"){
+                throw "some error";
+            }else{
+                return jsonResponse;
+            }
+        }).catch(function(error) {
             return ["https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif"];
-        }).then(function(response) {
-            return response.json();
         }).then(function(data) {
-            let photodata = data.photos.photo;
-            console.log(photodata);
-            for (let j = 0; j < 6; j++) {
+            let photodata;
+            if (data.photos != undefined) {
+                photodata = data.photos.photo;
+                for (let j = 0; j < 6; j++) {
                 arrayOfPhotoLinks.push(`https://farm${photodata[j].farm}.staticflickr.com/${photodata[j].server}/${photodata[j].id}_${photodata[j].secret}_q.jpg`);
+            }   
+            } else {
+                photodata = data;
+            }
+            for (let j = 0; j < 6; j++) {
+                arrayOfPhotoLinks.push(photodata[j]);
             }            
         });
         return arrayOfPhotoLinks;
